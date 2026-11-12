@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #0f172a;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
