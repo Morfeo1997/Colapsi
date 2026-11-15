@@ -1,100 +1,12 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { RoundedBox, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
-import { N, type Cell } from '../../game/engine';
+import { N } from '../../game/engine';
 import { useCollapsi } from '../../game/store';
 import { COLORS, SPACING, TILE_H, tilePos } from './constants';
 import Pawn from './Pawn';
-
-// ---------- Casilla ----------
-
-interface TileProps {
-  index: number;
-  value: Cell;
-  inPath: boolean;
-}
-
-function Tile({ index, value, inPath }: TileProps) {
-  const tapTile = useCollapsi((s) => s.tapTile);
-  const inner = useRef<THREE.Group>(null);
-  const destroyed = value === null;
-  const [x, , z] = tilePos(index);
-
-  // Aparición (pop) al montar y caída al destruirse.
-  useEffect(() => {
-    const g = inner.current;
-    if (!g) return;
-    gsap.killTweensOf([g.position, g.rotation, g.scale]);
-
-    if (destroyed) {
-      gsap.to(g.position, { y: -3, duration: 0.9, ease: 'power2.in' });
-      gsap.to(g.rotation, { x: 0.6, z: 0.4, duration: 0.9, ease: 'power2.in' });
-      gsap.to(g.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: 0.9,
-        ease: 'power2.in',
-        onComplete: () => {
-          g.visible = false;
-        },
-      });
-    } else {
-      g.visible = true;
-      g.position.y = 0;
-      g.rotation.set(0, 0, 0);
-      gsap.fromTo(
-        g.scale,
-        { x: 0, y: 0, z: 0 },
-        { x: 1, y: 1, z: 1, duration: 0.4, delay: index * 0.03, ease: 'back.out(1.7)' },
-      );
-    }
-  }, [destroyed, index]);
-
-  const color = inPath ? COLORS.path : COLORS.byValue[value ?? 1];
-
-  return (
-    <group position={[x, 0, z]}>
-      <group ref={inner}>
-        <RoundedBox args={[1, TILE_H, 1]} radius={0.06} smoothness={4}>
-          <meshStandardMaterial
-            color={color}
-            emissive={inPath ? COLORS.path : '#000000'}
-            emissiveIntensity={inPath ? 0.35 : 0}
-            roughness={0.6}
-          />
-        </RoundedBox>
-        {value !== null && (
-          <Text
-            position={[0, TILE_H / 2 + 0.01, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            fontSize={0.5}
-            color={COLORS.text}
-            anchorX="center"
-            anchorY="middle"
-          >
-            {value}
-          </Text>
-        )}
-      </group>
-
-      {/* Plano de toque siempre presente (también sobre casillas destruidas). */}
-      <mesh
-        position={[0, TILE_H / 2 + 0.02, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        onPointerDown={(e) => {
-          e.stopPropagation();
-          tapTile(index);
-        }}
-      >
-        <planeGeometry args={[SPACING, SPACING]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-      </mesh>
-    </group>
-  );
-}
+import Tile from './Tile';
 
 // ---------- Estallido rojo (toque ilegal) ----------
 
@@ -191,7 +103,7 @@ export default function Board() {
       {/* Base oscura bajo el tablero */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
         <planeGeometry args={[N * SPACING + 1, N * SPACING + 1]} />
-        <meshStandardMaterial color="#1e293b" />
+        <meshStandardMaterial color={COLORS.water} />
       </mesh>
 
       {/* key con matchId: al empezar una partida nueva se remonta todo (pop de casillas, fichas directas). */}
