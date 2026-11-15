@@ -5,27 +5,8 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { N, type Cell } from '../../game/engine';
 import { useCollapsi } from '../../game/store';
-
-// ---------- Constantes y helpers ----------
-
-const SPACING = 1.15; // distancia entre centros de casillas
-const TILE_H = 0.3;
-const PAWN_Y = TILE_H / 2 + 0.28;
-const COLORS = {
-  blue: '#3b82f6',
-  red: '#ef4444',
-  path: '#4ade80',
-  text: '#0f172a',
-  bg: '#0f172a',
-  byValue: { 1: '#f1f5f9', 2: '#e2e8f0', 3: '#cbd5e1', 4: '#94a3b8' } as Record<number, string>,
-};
-
-/** Posición 3D del centro de la casilla `i` (el tablero queda centrado en el origen). */
-export const tilePos = (i: number): [number, number, number] => [
-  ((i % N) - (N - 1) / 2) * SPACING,
-  0,
-  (Math.floor(i / N) - (N - 1) / 2) * SPACING,
-];
+import { COLORS, SPACING, TILE_H, tilePos } from './constants';
+import Pawn from './Pawn';
 
 // ---------- Casilla ----------
 
@@ -110,70 +91,6 @@ function Tile({ index, value, inPath }: TileProps) {
       >
         <planeGeometry args={[SPACING, SPACING]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-      </mesh>
-    </group>
-  );
-}
-
-// ---------- Ficha ----------
-
-interface PawnProps {
-  player: 0 | 1;
-  tile: number;
-  color: string;
-}
-
-function Pawn({ player, tile, color }: PawnProps) {
-  const ref = useRef<THREE.Group>(null);
-
-  // Solo se re-ejecuta cuando ESTE jugador cambia de casilla.
-  useEffect(() => {
-    const g = ref.current;
-    if (!g) return;
-    gsap.killTweensOf(g.position);
-
-    const [tx, , tz] = tilePos(tile);
-    const lm = useCollapsi.getState().lastMove;
-    const animated = lm && lm.player === player && lm.path[lm.path.length - 1] === tile;
-
-    if (!animated) {
-      g.position.set(tx, PAWN_Y, tz);
-      return;
-    }
-
-    const tl = gsap.timeline();
-    let prev = { x: g.position.x, z: g.position.z };
-    for (const t of lm.path) {
-      const [x, , z] = tilePos(t);
-      const wraps = Math.hypot(x - prev.x, z - prev.z) > SPACING * 1.5; // salto por el borde
-      if (wraps) {
-        tl.set(g.position, { x, z });
-      } else {
-        tl.to(g.position, { x, z, duration: 0.22, ease: 'power1.inOut' });
-        tl.to(
-          g.position,
-          { y: PAWN_Y + 0.25, duration: 0.11, yoyo: true, repeat: 1, ease: 'sine.out' },
-          '<',
-        );
-      }
-      prev = { x, z };
-    }
-    tl.set(g.position, { x: tx, y: PAWN_Y, z: tz });
-
-    return () => {
-      tl.kill();
-    };
-  }, [tile, player]);
-
-  return (
-    <group ref={ref}>
-      <mesh position={[0, -0.08, 0]}>
-        <cylinderGeometry args={[0.22, 0.28, 0.3, 24]} />
-        <meshStandardMaterial color={color} roughness={0.4} />
-      </mesh>
-      <mesh position={[0, 0.16, 0]}>
-        <sphereGeometry args={[0.2, 24, 24]} />
-        <meshStandardMaterial color={color} roughness={0.3} />
       </mesh>
     </group>
   );
@@ -282,8 +199,18 @@ export default function Board() {
         {game.tiles.map((value, i) => (
           <Tile key={i} index={i} value={value} inPath={path.includes(i)} />
         ))}
-        <Pawn player={0} tile={game.players[0]} color={COLORS.blue} />
-        <Pawn player={1} tile={game.players[1]} color={COLORS.red} />
+        <Pawn
+          player={0}
+          tile={game.players[0]}
+          color={COLORS.blue}
+          active={game.winner === null && game.turn === 0}
+        />
+        <Pawn
+          player={1}
+          tile={game.players[1]}
+          color={COLORS.red}
+          active={game.winner === null && game.turn === 1}
+        />
       </group>
 
       <Burst />
