@@ -8,6 +8,7 @@ import {
   applyMove,
   aiChoosePath,
 } from './engine';
+import { playMusic, playSfx, stopMusic } from './audio';
 
 export type Screen = 'menu' | 'rules' | 'game';
 export type Mode = 'ai' | 'pvp';
@@ -100,6 +101,7 @@ export const useCollapsi = create<CollapsiStore>((set, get) => {
       lastIllegal: null,
     });
     if (next.winner === null) scheduleAi();
+    else playSfx('win', { delayMs: 400 }); // tras el último paso de la ficha
   };
 
   const newRound = (round: number) => {
@@ -133,6 +135,7 @@ export const useCollapsi = create<CollapsiStore>((set, get) => {
 
     startGame: (mode, difficulty = get().difficulty) => {
       set({ mode, difficulty, screen: 'game', score: [0, 0] });
+      playMusic(); // se ejecuta desde un clic: el navegador permite el audio
       newRound(0);
     },
 
@@ -168,13 +171,15 @@ export const useCollapsi = create<CollapsiStore>((set, get) => {
       newRound(get().round + 1);
     },
 
-    backToMenu: () =>
+    backToMenu: () => {
+      stopMusic();
       set((s) => ({
         screen: 'menu',
         aiThinking: false,
         matchId: s.matchId + 1,
         path: [],
-      })),
+      }));
+    },
   };
 });
 

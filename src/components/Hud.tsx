@@ -1,5 +1,6 @@
 import { useCollapsi, selectMovesLeft, selectCanConfirm, stepsOf } from '../game/store';
 import { btn } from './ui';
+import { toggleMute, useMuted } from '../game/audio';
 
 type Tone = 'blue' | 'red';
 
@@ -54,6 +55,7 @@ export default function Hud() {
   const confirm = useCollapsi((s) => s.confirm);
   const nextRound = useCollapsi((s) => s.nextRound);
   const backToMenu = useCollapsi((s) => s.backToMenu);
+  const muted = useMuted();
 
   const over = game.winner !== null;
   const turnTone: Tone = game.turn === 0 ? 'blue' : 'red';
@@ -90,6 +92,9 @@ export default function Hud() {
         <div className="flex items-center justify-center gap-3">
           <button className={`${btn} bg-slate-700 hover:bg-slate-600`} onClick={backToMenu}>
             Menú
+          </button>
+          <button className={`${btn} bg-slate-700 hover:bg-slate-600`} onClick={toggleMute}>
+            {muted ? 'Sonido: no' : 'Sonido: sí'}
           </button>
           <button
             className={`${btn} bg-amber-600 hover:bg-amber-500`}

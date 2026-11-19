@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import type { Cell } from '../../game/engine';
 import { useCollapsi } from '../../game/store';
+import { playSfx } from '../../game/audio';
 import { COLORS, SPACING, TILE_H, tilePos } from './constants';
 
 // ---------- Números en las esquinas ----------
@@ -263,6 +264,7 @@ export default function Tile({ index, value, inPath, breakStyle = 'random' }: Ti
     s.visible = true;
     pieces.forEach((p, i) => tls.push(variant(p, SHARDS[i], ctx)));
     dustBurst(d, tls);
+    playSfx('break'); // en el mismo instante que empieza la animación
 
     return cleanup;
   }, [destroyed, index, breakStyle]);
