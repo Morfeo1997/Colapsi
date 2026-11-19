@@ -13,7 +13,7 @@ interface GroupConfig {
 }
 
 export const SFX: Record<SfxGroup, GroupConfig> = {
-  break: { files: ['break-1.mp3', 'break-2.mp3'], volume: 0.8, rate: [0.92, 1.08] },
+  break: { files: ['break-1.wav', 'break-2.wav'], volume: 0.8, rate: [0.92, 1.08] },
   win: { files: ['win-1.mp3', 'win-2.mp3'], volume: 0.9, rate: [1, 1] },
 };
 
