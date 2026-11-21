@@ -46,6 +46,7 @@ export function createGame(): GameState {
 /**
  * Todos los recorridos legales del jugador en turno.
  * Cada recorrido son exactamente `valor` pasos (sin incluir la casilla inicial).
+ * Se puede pasar por la casilla del rival, pero no terminar el recorrido en ella.
  */
 export function legalPaths(s: GameState, p: PlayerId = s.turn): number[][] {
   const start = s.players[p];
@@ -60,7 +61,9 @@ export function legalPaths(s: GameState, p: PlayerId = s.turn): number[][] {
     }
     const cur = path.length ? path[path.length - 1] : start;
     for (const n of neighbors(cur)) {
-      if (visited.has(n) || s.tiles[n] === null || n === rival) continue;
+      const isLastStep = path.length === steps - 1;
+      if (visited.has(n) || s.tiles[n] === null) continue;
+      if (n === rival && isLastStep) continue; // se puede atravesar al rival, pero no estacionar encima
       visited.add(n);
       path.push(n);
       dfs(path, visited);

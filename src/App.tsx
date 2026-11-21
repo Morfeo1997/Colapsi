@@ -14,7 +14,7 @@ function Rules() {
     'Te mueves en ortogonal (arriba, abajo, izquierda, derecha) y puedes cambiar de dirección.',
     'No puedes repetir casillas en el mismo recorrido ni volver a la de inicio.',
     'Si sales por un borde, apareces en el lado opuesto (como Pacman).',
-    'No puedes pasar por casillas destruidas ni por la casilla del otro jugador.',
+    'No puedes pasar por casillas destruidas. Sí puedes pasar por la casilla del otro jugador, pero no terminar tu movimiento sobre ella.',
     'Al terminar tu turno, la casilla donde empezaste se destruye.',
     'Pierde el primer jugador que se quede sin movimientos posibles.',
     'Toca las casillas una a una (se marcan en verde), y pulsa Confirmar. Puedes Deshacer antes de confirmar.',
