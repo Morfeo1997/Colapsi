@@ -40,7 +40,7 @@ export default function App() {
   const screen = useCollapsi((s) => s.screen);
 
   return (
-    <div className="h-dvh w-full bg-slate-900 text-slate-100">
+    <div className="h-dvh w-full bg-linear-to-b from-Sky-Up to-Sky-Down text-slate-100">
       {screen === 'menu' && <Menu />}
       {screen === 'rules' && <Rules />}
       {screen === 'game' && (

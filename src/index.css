@@ -12,3 +12,12 @@ body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+
+@theme{
+
+	--color-Sky-Up: #B6DEDE;
+	--color-Sky-Down: #A9C7C7;
+	--color-Snow: #708C8C;
+
+}
