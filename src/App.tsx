@@ -49,6 +49,10 @@ export default function App() {
           <Hud />
         </div>
       )}
+      <footer className="flex flex-col bg-Sky-Down w-full text-center text-slate-800 gap-2">
+        <p>Idea original de <span className="font-bold text-blue-800 hover:text-cyan-900 transition-colors duration-300">Mark S. Ball</span></p>
+        <p>Creado por <a target="_blank" href="https://gaston-gomez1997.netlify.app" className="font-bold text-blue-800 hover:text-cyan-900 transition-colors duration-300">Gastón Gómez</a></p>
+      </footer>
     </div>
   );
 }
